@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>rabbit exmaple</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <script type="text/javascript" src="/js/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
+<script>
+
+function createMeter(producerCount, consumerCount) {
+  var meter = '<p>Records published to producer<h3>' + producerCount + '</h3></p><meter value="' + producerCount + '" min="0" max="100000"></meter><br><br>' +
+    '<p>Records consumed</p><h3>' + consumerCount + '</h3><meter value="' + consumerCount + '" min="0" max="100000"></meter><br>';
+    return meter;
+}
+
+function runMeter() {
+    var runner = window.setInterval(function() {
+    $.ajax({
+    url: "/getcounts",
+    type: 'get',
+    dataType: 'json',
+    success: function (data) {
+       $('#metergauge').html(createMeter(data.producercount,data.consumercount));
+       //setTimeout(runMeter(), 3000) // wait 3 seconds before polling again
+    },
+    error: function(data) {
+      alert('Could not poll for queue counts: ' + data.error);
+      window.clearInterval(runner);
+    }
+   });
+ }, 3000);
+}
+ 
+</script>
+</head>
+<body onload="runMeter();">
+  
+  <div class="container">
+    
+    <div class="row">
+    
+      <div class="col-sm-2">
+      </div>
+    
+      <div class="col-sm-8">
+        <center>
+          <div id="metergauge"><h1>Loading...</h1></div>
+        </center>
+      </div>
+      
+      <div class="col-sm-2">
+      </div>
+      
+    </div> <!-- end row -->
+    
+  </div> <!-- end coontainer -->
+  
+  
+  
+</body>
+</html>
